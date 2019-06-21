@@ -1,0 +1,13 @@
+diff --git a/core/src/main/java/org/apache/calcite/rel/metadata/JaninoRelMetadataProvider.java b/core/src/main/java/org/apache/calcite/rel/metadata/JaninoRelMetadataProvider.java
+index ac395e4..1e2b4d8 100644
+--- a/core/src/main/java/org/apache/calcite/rel/metadata/JaninoRelMetadataProvider.java
++++ b/core/src/main/java/org/apache/calcite/rel/metadata/JaninoRelMetadataProvider.java
+@@ -287,7 +287,7 @@ public static JaninoRelMetadataProvider of(RelMetadataProvider provider) {
+           .append("      mq.map.put(key, x);\n")
+           .append("      return x;\n")
+           .append("    } catch (")
+-          .append(NoHandler.class.getName())
++          .append(Exception.class.getName())
+           .append(" e) {\n")
+           .append("      mq.map.remove(key);\n")
+           .append("      throw e;\n")
