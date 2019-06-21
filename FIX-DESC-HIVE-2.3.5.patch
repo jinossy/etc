@@ -1,0 +1,35 @@
+diff --git a/ql/src/java/org/apache/hadoop/hive/ql/exec/DDLTask.java b/ql/src/java/org/apache/hadoop/hive/ql/exec/DDLTask.java
+index b339f97a44..af7aadbf14 100644
+--- a/ql/src/java/org/apache/hadoop/hive/ql/exec/DDLTask.java
++++ b/ql/src/java/org/apache/hadoop/hive/ql/exec/DDLTask.java
+@@ -3329,18 +3329,21 @@ private int describeTable(Hive db, DescTableDesc descTbl) throws HiveException,
+             valueMap.put(stat, 0L);
+             stateMap.put(stat, true);
+           }
+-          PartitionIterable parts = new PartitionIterable(db, tbl, null, conf.getIntVar(HiveConf.ConfVars.METASTORE_BATCH_RETRIEVE_MAX));
++
+           int numParts = 0;
+-          for (Partition partition : parts) {
+-            Map<String, String> props = partition.getParameters();
+-            Boolean state = StatsSetupConst.areBasicStatsUptoDate(props);
+-            for (String stat : StatsSetupConst.supportedStats) {
+-              stateMap.put(stat, stateMap.get(stat) && state);
+-              if (props != null && props.get(stat) != null) {
+-                valueMap.put(stat, valueMap.get(stat) + Long.parseLong(props.get(stat)));
++          if (descTbl.isFormatted() || descTbl.isExt()) {
++            PartitionIterable parts = new PartitionIterable(db, tbl, null, conf.getIntVar(HiveConf.ConfVars.METASTORE_BATCH_RETRIEVE_MAX));
++            for (Partition partition : parts) {
++              Map<String, String> props = partition.getParameters();
++              Boolean state = StatsSetupConst.areBasicStatsUptoDate(props);
++              for (String stat : StatsSetupConst.supportedStats) {
++                stateMap.put(stat, stateMap.get(stat) && state);
++                if (props != null && props.get(stat) != null) {
++                  valueMap.put(stat, valueMap.get(stat) + Long.parseLong(props.get(stat)));
++                }
+               }
++              numParts++;
+             }
+-            numParts++;
+           }
+           for (String stat : StatsSetupConst.supportedStats) {
+             StatsSetupConst.setBasicStatsState(tblProps, Boolean.toString(stateMap.get(stat)));
